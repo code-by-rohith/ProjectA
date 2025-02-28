@@ -1,24 +1,17 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request
+from flask_socketio import SocketIO, send
 
 app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
-# Store user data (in-memory)
-users = []
+@app.route('/')
+def home():
+    return "WebSocket Server Running!"
 
-# GET route to display all users
-@app.route("/users", methods=["GET"])
-def get_users():
-    return jsonify(users), 200
+@socketio.on('message')
+def handle_message(msg):
+    print(f"Received message: {msg}")
+    send(f"Server received: {msg}", broadcast=True)
 
-# POST route to add a user
-@app.route("/users", methods=["POST"])
-def add_user():
-    data = request.json
-    if not data or "username" not in data or "email" not in data:
-        return jsonify({"error": "Missing username or email"}), 400
-
-    users.append({"username": data["username"], "email": data["email"]})
-    return jsonify({"message": "User added successfully"}), 201
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)  # Ensure it runs on all interfaces
+if __name__ == '__main__':
+    socketio.run(app, host='0.0.0.0', port=8000, debug=True)
