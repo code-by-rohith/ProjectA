@@ -2,7 +2,7 @@ from flask import Flask
 from flask_socketio import SocketIO
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")  # Allow all connections
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")  # Force eventlet
 
 @socketio.on("connect")
 def handle_connect():
@@ -14,4 +14,4 @@ def handle_message(data):
     socketio.send(f"Echo: {data}")
 
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+    socketio.run(app, host="0.0.0.0", port=8000, debug=True)
