@@ -1,5 +1,2 @@
-Flask
-flask_socketio
-python-socketio
-python-engineio
-eventlet  
+flask
+gunicorn
