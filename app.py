@@ -1,22 +1,17 @@
-import os
 from flask import Flask
-from flask_socketio import SocketIO
+from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
+socketio = SocketIO(app, cors_allowed_origins="*")  # Allow cross-origin requests
 
-@app.route("/")
-def main():
-    return "<h1>Server is running !!<h1>"
-@socketio.on("connect")
-def handle_connect():
-    print("Client connected!")
+@app.route('/')
+def home():
+    return "Real-Time Messaging Server is running!"
 
-@socketio.on("message")
+@socketio.on('message')
 def handle_message(data):
-    print(f"Received: {data}")
-    socketio.send(f"Echo: {data}")
+    print(f"Received message: {data}")
+    emit('message', f"Server Response: {data}", broadcast=True)  # Send response to all clients
 
-if __name__ == "__main__":
-    port = int(os.getenv("PORT", 8000))  # Use Azure’s assigned port
-    socketio.run(app, host="0.0.0.0", port=port, debug=True)
+if __name__ == '__main__':
+    socketio.run(app, host='0.0.0.0', port=5000)
