@@ -5,6 +5,9 @@ from flask_socketio import SocketIO
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 
+@app.route("/")
+def main():
+    return "<h1>Server is running !!<h1>"
 @socketio.on("connect")
 def handle_connect():
     print("Client connected!")
